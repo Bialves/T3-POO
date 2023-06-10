@@ -50,6 +50,8 @@ public class Utils {
 
     public void createCarga() throws NumberFormatException {
         boolean create = false;
+        String information = "";
+
         String cliente = tela.getTextCliente().getText();
         String portoOrigem = tela.getTextPortoOrigem().getText();
         String portoDestino = tela.getTextPortoDestino().getText();
@@ -73,42 +75,53 @@ public class Utils {
 
             if (c != null && o != null && d != null) { // Se existerem, faz as demais verificações
                 if ((!id.isEmpty()) && (!desc.isEmpty()) && (!peso.isEmpty()) && (!valorDeclarado.isEmpty()) && (!tempoMax.isEmpty())) {
+
                     int identificador = Integer.parseInt(id); // Realiza conversões
                     int kg = Integer.parseInt(peso);
                     int tempo = Integer.parseInt(tempoMax);
                     double valor = Double.parseDouble(valorDeclarado);
                     if (((!tipoId.isEmpty()) && (!origem.isEmpty()) && (!validadeMax.isEmpty()))
                             && ((imposto.isEmpty()) && (material.isEmpty()) && (setor.isEmpty()))) {
+
                         int tipo = Integer.parseInt(tipoId); // Realiza conversões
                         int validade = Integer.parseInt(validadeMax);
 
                         TipoCarga tipoCarga = new Perecivel(tipo, origem, validade, desc);
                         // Faz as instancias
-                        create = estoque.adicionarCarga(
-                                new Carga(
-                                        identificador, tipoCarga, c, o, d, kg, valor, tempo
-                                )
-                        );
+                        if (estoque.adicionarCarga(new Carga(identificador, tipoCarga, c, o, d, kg, valor, tempo))) {
+                            create = true;
+                        } else {
+                            information = "Carga já existente!";
+                        }
                         // Reordena a lista
                         Collections.sort(estoque.getEstoque(), new OrderEstoque());
 
                     } else if (((!tipoId.isEmpty()) && (origem.isEmpty()) && (validadeMax.isEmpty()))
                             && ((!imposto.isEmpty()) && (!material.isEmpty()) && (!setor.isEmpty()))) {
+
                         int tipo = Integer.parseInt(tipoId); // Realiza conversões
                         double percentual = Double.parseDouble(imposto);
                         // Faz as instancias
                         TipoCarga tipoCarga = new Duravel(tipo, setor, material, percentual, desc);
 
-                        create = estoque.adicionarCarga(
-                                new Carga(
-                                        identificador, tipoCarga, c, o, d, kg, valor, tempo
-                                )
-                        );
+                        if (estoque.adicionarCarga(new Carga(identificador, tipoCarga, c, o, d, kg, valor, tempo))) {
+                            create = true;
+                        } else {
+                            information = "Carga já existente!";
+                        }
                         // Reordena a lista
                         Collections.sort(estoque.getEstoque(), new OrderEstoque());
+                    } else {
+                        information = "Tipo de carga inválida!";
                     }
+                } else {
+                    information = "Campos com dados da carga incompletos!";
                 }
+            } else {
+                information = "Cliente e/ou Portos não existem!";
             }
+        } else {
+            information = "Campos não incompletos!";
         }
 
         if (create) { // Se foi realizado o cadastro
@@ -118,7 +131,7 @@ public class Utils {
             System.out.println(estoque.toString());
         } else { // Senão foi
             tela.setHeaderInformation("FALHA NO CADASTRO");
-            tela.setInformation("Erro ao adicionar a nova carga: Campos inválidos");
+            tela.setInformation(information);
 
             System.out.println(estoque.toString());
         }

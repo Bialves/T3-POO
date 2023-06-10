@@ -31,7 +31,6 @@ public class Screen extends JFrame {
     public Screen(Events events) {
         super("Sistema de Cadastro de Carga");
         this.setSize(600,500);
-        this.setResizable(false);
         this.setLocationRelativeTo(null);
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
         this.events = events;
@@ -226,9 +225,7 @@ public class Screen extends JFrame {
         return textTempoMax;
     }
 
-    public JTextField getTextTipoID() {
-        return textTipoID;
-    }
+    public JTextField getTextTipoID() {return textTipoID;}
 
     public JTextField getTextDesc() {
         return textDesc;
